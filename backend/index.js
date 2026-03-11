@@ -82,7 +82,18 @@ app.put('/users/:id', async (req, res) => {
         res.status(500).json({ error: 'Failed to update data' });
     }
 });
-
+app.delete('/users/:id', async (req, res) => {
+    try {
+        const [result] = await pool.execute('DELETE FROM users WHERE id = ?', [req.params.id]);
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        console.error('Error deleting data:', error);
+        res.status(500).json({ error: 'Failed to delete data' });
+    }
+});
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
